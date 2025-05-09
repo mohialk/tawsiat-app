@@ -1,4 +1,3 @@
-
 import streamlit as st
 import requests
 import pandas as pd
@@ -32,9 +31,9 @@ def fetch_data(ticker):
     return df
 
 def analyze_stock(df, mode):
-    df['EMA'] = df['Close'].ewm(span=50 if mode=="استثمار" else 9).mean()
-    signal = df['Close'].iloc[-1] > df['EMA'].iloc[-1] if mode=="مضاربة" else df['Close'].iloc[-1] < df['EMA'].iloc[-1]
-    stop = round(df['Close'].iloc[-1] * (0.95 if mode=="استثمار" else 0.97), 2)
+    df['EMA'] = df['Close'].ewm(span=50 if mode == "استثمار" else 9).mean()
+    signal = df['Close'].iloc[-1] > df['EMA'].iloc[-1] if mode == "مضاربة" else df['Close'].iloc[-1] < df['EMA'].iloc[-1]
+    stop = round(df['Close'].iloc[-1] * (0.95 if mode == "استثمار" else 0.97), 2)
     target1 = round(df['Close'].iloc[-1] * 1.03, 2)
     target2 = round(df['Close'].iloc[-1] * 1.06, 2)
     target3 = round(df['Close'].iloc[-1] * 1.10, 2)
@@ -43,7 +42,7 @@ def analyze_stock(df, mode):
     return signal, target1, target2, target3, stop, duration, reason
 
 for mode in ["استثمار", "مضاربة"]:
-    st.header(f"{'👑' if mode=='استثمار' else '⚡'} أسهم {mode}")
+    st.header(f"{'👑' if mode == 'استثمار' else '⚡'} أسهم {mode}")
     cols = st.columns(len(stocks[mode]))
     for i, symbol in enumerate(stocks[mode]):
         with cols[i]:
