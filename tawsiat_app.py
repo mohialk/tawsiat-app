@@ -24,11 +24,19 @@ def load_data(symbol):
 
 data = load_data(selected)
 
-def analyze_investment(data):
-    data['EMA50'] = data['Close'].ewm(span=50).mean()
-    data = data.dropna(subset=['EMA50'])
-    data.loc[:, 'Signal'] = data['Close'] < data['EMA50']
+def analyze_trade(data):
+    data['EMA9'] = data['Close'].ewm(span=9).mean()
+    data['VolumeMA20'] = data['Volume'].rolling(20).mean()
+    
+    # تأكد من أن الأعمدة موجودة فعلاً قبل محاولة الحذف
+    if 'EMA9' in data.columns and 'VolumeMA20' in data.columns:
+        data = data.dropna(subset=['EMA9', 'VolumeMA20'])
+        data.loc[:, 'Signal'] = (data['Volume'] > 1.5 * data['VolumeMA20']) & (data['Close'] > data['EMA9'])
+    else:
+        data['Signal'] = False  # لا توجد بيانات كافية
+
     return data
+
 
 def analyze_trade(data):
     data['EMA9'] = data['Close'].ewm(span=9).mean()
