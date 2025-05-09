@@ -26,13 +26,15 @@ data = load_data(selected)
 
 def analyze_investment(data):
     data['EMA50'] = data['Close'].ewm(span=50).mean()
-    data['Signal'] = data['Close'] < data['EMA50']
+    data = data.dropna(subset=['EMA50'])
+    data.loc[:, 'Signal'] = data['Close'] < data['EMA50']
     return data
 
 def analyze_trade(data):
     data['EMA9'] = data['Close'].ewm(span=9).mean()
     data['VolumeMA20'] = data['Volume'].rolling(20).mean()
-    data['Signal'] = (data['Volume'] > 1.5 * data['VolumeMA20']) & (data['Close'] > data['EMA9'])
+    data = data.dropna(subset=['EMA9', 'VolumeMA20'])
+    data.loc[:, 'Signal'] = (data['Volume'] > 1.5 * data['VolumeMA20']) & (data['Close'] > data['EMA9'])
     return data
 
 if stocks[selected] == "استثمار":
